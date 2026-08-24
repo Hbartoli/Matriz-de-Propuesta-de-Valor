@@ -188,4 +188,76 @@ if st.session_state.analizado:
     # RENDIMIENTO FINANCIERO DEL CLIENTE (CAC/LTV)
     st.markdown("#### 🔄 Métricas Unitarias por Cliente (Unit Economics)")
     u1, u2, u3 = st.columns(3)
-u1.metric(label="CAC (Costo de Adquisición)", value=f"${cac_calculado:,.2f}", help="Te cuesta esto traer un cliente.")u2.metric(label="LTV (Valor de Vida Útil)", value=f"${ltv_calculado:,.2f}", help="Esto te deja de ganancia neta un cliente a lo largo de su ciclo de vida.")u3.metric(label="Relación LTV / CAC", value=f"{relacion_ltv_cac:.2f}x",delta="Saludable (> 3x)" if relacion_ltv_cac >= 3 else "Peligro (< 3x)",delta_color="normal" if relacion_ltv_cac >= 3 else "inverse")# Gráficos combinadosst.subheader("📈 Análisis de Mercado y Unit Economics")g1, g2 = st.columns(2)with g1:st.caption("Volumen de Ingresos por Capa de Mercado ($)")mercado_chart_data = pd.DataFrame({"Capa de Mercado": ["TAM", "SAM", "SOM"], "Ingresos ($)": [valor_tam, valor_sam, valor_som]}).set_index("Capa de Mercado")st.bar_chart(mercado_chart_data)with g2:st.caption("Comparativa de Costo de Captura vs Retorno Neto ($)")economics_chart_data = pd.DataFrame({"Métrica Financiera": ["CAC (Inversión)", "LTV (Retorno Neto)"], "Monto ($)": [cac_calculado, ltv_calculado]}).set_index("Métrica Financiera")st.bar_chart(economics_chart_data)# 4. Análisis Competitivost.subheader("🏆 Resultados del Análisis Competitivo")try:promedios = df_competencia.mean(numeric_only=True)lider = promedios.idxmax()puntaje_lider = promedios.max()st.info(f"💡 Evaluación Competitiva: El líder según tus calificaciones es {lider} con un promedio de {puntaje_lider:.2f}/5.")except Exception:st.caption("Registra valores numéricos en la competencia para calcular promedios.")# Diagnóstico Final Integrado con CAC/LTVst.subheader("💡 Dictamen Comercial e Indicaciones Técnicas")# Lógica de negocio rigurosaif encaje_total >= 80 and relacion_ltv_cac >= 3.0 and valor_som >= 50000:st.balloons()st.success("Negocio Altamente Escalable (Luz Verde): Tu propuesta tiene un encaje sólido, tus Unit Economics son excelentes (el LTV triplica o supera al CAC) y el volumen de mercado sustenta la operación. Tienes un modelo apto para presentar ante inversores.")elif relacion_ltv_cac < 3.0:st.error("Foco de Alerta en Unit Economics (Inviabilidad Comercial): Aunque tu producto resuelva problemas, estás gastando demasiado en adquirir clientes (CAC) para la poca ganancia neta (LTV) que te dejan en su ciclo de vida. Necesitas reducir costos de conversión o subir los precios/retención urgentemente.")elif encaje_total >= 50:st.warning("Ajuste Incompleto o Mercado Limitado: Tu propuesta funciona, pero tus volúmenes financieros son ajustados. Revisa tus canales de captación para ver si puedes mejorar tu presencia en el SAM.")else:st.error("Proyecto en Zona de Riesgo: El encaje de valor es muy bajo o los números generales no sustentan el negocio.")# --- EXPORTACIÓN GENERAL ---csv_propuesta = pd.DataFrame({"Métrica General": ["Ajuste Total %", "Valor TAM $", "Valor SAM $", "Valor SOM $", "Costo Adquisición (CAC)", "Valor de Vida (LTV)", "Ratio LTV/CAC"],"Resultado": [f"{encaje_total}%", f"${valor_tam:,.2f}", f"${valor_sam:,.2f}", f"${valor_som:,.2f}", f"${cac_calculado:,.2f}", f"${ltv_calculado:,.2f}", f"{relacion_ltv_cac:.2f}x"]})csv_data = csv_propuesta.to_csv(index=False).encode('utf-8')st.write("")st.download_button(label="📥 Descargar Reporte de Negocio Consolidado (CSV)",data=csv_data,file_name="reporte_financiero_matriz.csv",mime="text/csv",)
+    u1.metric(
+        label="CAC (Costo de Adquisición)", 
+        value=f"${cac_calculado:,.2f}", 
+        help="Te cuesta esto traer un cliente."
+    )
+    u2.metric(
+        label="LTV (Valor de Vida Útil)", 
+        value=f"${ltv_calculado:,.2f}", 
+        help="Esto te deja de ganancia neta un cliente a lo largo de su ciclo de vida."
+    )
+    u3.metric(
+        label="Relación LTV / CAC", 
+        value=f"{relacion_ltv_cac:.2f}x", 
+        delta="Saludable (> 3x)" if relacion_ltv_cac >= 3 else "Peligro (< 3x)", 
+        delta_color="normal" if relacion_ltv_cac >= 3 else "inverse"
+    )
+
+    # Gráficos combinados
+    st.subheader("📈 Análisis de Mercado y Unit Economics")
+    g1, g2 = st.columns(2)
+    with g1:
+        st.caption("Volumen de Ingresos por Capa de Mercado ($)")
+        mercado_chart_data = pd.DataFrame({
+            "Capa de Mercado": ["TAM", "SAM", "SOM"], 
+            "Ingresos ($)": [valor_tam, valor_sam, valor_som]
+        }).set_index("Capa de Mercado")
+        st.bar_chart(mercado_chart_data)
+        
+    with g2:
+        st.caption("Comparativa de Costo de Captura vs Retorno Neto ($)")
+        economics_chart_data = pd.DataFrame({
+            "Métrica Financiera": ["CAC (Inversión)", "LTV (Retorno Neto)"], 
+            "Monto ($)": [cac_calculado, ltv_calculado]
+        }).set_index("Métrica Financiera")
+        st.bar_chart(economics_chart_data)
+
+    # 4. Análisis Competitivo
+    st.subheader("🏆 Resultados del Análisis Competitivo")
+    try:
+        promedios = df_competencia.mean(numeric_only=True)
+        lider = promedios.idxmax()
+        puntaje_lider = promedios.max()
+        st.info(f"💡 **Evaluación Competitiva:** El líder según tus calificaciones es **{lider}** con un promedio de **{puntaje_lider:.2f}/5**.")
+    except Exception:
+        st.caption("Registra valores numéricos en la competencia para calcular promedios.")
+
+    # Diagnóstico Final Integrado con CAC/LTV
+    st.subheader("💡 Dictamen Comercial e Indicaciones Técnicas")
+    
+    if encaje_total >= 80 and relacion_ltv_cac >= 3.0 and valor_som >= 50000:
+        st.balloons()
+        st.success("**Negocio Altamente Escalable (Luz Verde):** Tu propuesta tiene un encaje sólido, tus *Unit Economics* son excelentes (el LTV triplica o supera al CAC) y el volumen de mercado sustenta la operación. Tienes un modelo apto para presentar ante inversores.")
+    elif relacion_ltv_cac < 3.0:
+        st.error("**Foco de Alerta en Unit Economics (Inviabilidad Comercial):** Aunque tu producto resuelva problemas, estás gastando demasiado en adquirir clientes (`CAC`) para la poca ganancia neta (`LTV`) que te dejan en su ciclo de vida. Necesitas reducir costos de conversión o subir los precios/retención urgentemente.")
+    elif encaje_total >= 50:
+        st.warning("**Ajuste Incompleto o Mercado Limitado:** Tu propuesta funciona, pero tus volúmenes financieros son ajustados. Revisa tus canales de captación para ver si puedes mejorar tu presencia en el SAM.")
+    else:
+        st.error("**Proyecto en Zona de Riesgo:** El encaje de valor es muy bajo o los números generales no sustentan el negocio.")
+
+    # --- EXPORTACIÓN GENERAL ---
+    csv_propuesta = pd.DataFrame({
+        "Métrica General": ["Ajuste Total %", "Valor TAM $", "Valor SAM $", "Valor SOM $", "Costo Adquisición (CAC)", "Valor de Vida (LTV)", "Ratio LTV/CAC"],
+        "Resultado": [f"{encaje_total}%", f"${valor_tam:,.2f}", f"${valor_sam:,.2f}", f"${valor_som:,.2f}", f"${cac_calculado:,.2f}", f"${ltv_calculado:,.2f}", f"{relacion_ltv_cac:.2f}x"]
+    })
+    
+    csv_data = csv_propuesta.to_csv(index=False).encode('utf-8')
+    st.write("")
+    st.download_button(
+        label="📥 Descargar Reporte de Negocio Consolidado (CSV)",
+        data=csv_data,
+        file_name="reporte_financiero_matriz.csv",
+        mime="text/csv",
+    )
