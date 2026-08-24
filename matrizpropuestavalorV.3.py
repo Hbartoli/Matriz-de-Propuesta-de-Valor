@@ -183,7 +183,21 @@ if st.session_state.analizado:
         st.balloons()
         st.success("**Propuesta de Alta Viabilidad:** Cuentas con un encaje sólido en el papel, un mercado capturable (SOM) monetariamente atractivo y validación en marcha. El proyecto califica para iniciar fases operativas intensivas.")
     elif encaje_total >= 50:
-st.warning("Ajuste Incompleto o Mercado Limitado: Tu propuesta resuelve problemas, pero el volumen financiero de tu SOM es ajustado o tu validación es baja. Considera optimizar tu estrategia de precios o expandir los canales de distribución para elevar tu SAM.")else:st.error("Proyecto en Zona de Riesgo: El encaje de valor es muy bajo o los números del mercado no sustentan la operación de la empresa. No escales gastos; necesitas redefinir el dolor principal del cliente.")# --- EXPORTACIÓN GENERAL ---csv_propuesta = pd.DataFrame({"Métrica General": ["Ajuste Total %", "Valor TAM $", "Valor SAM $", "Valor SOM $", "Validaciones (0-3)"],"Resultado": [f"{encaje_total}%", f"${valor_tam:,.2f}", f"${valor_sam:,.2f}", f"${valor_som:,.2f}", validaciones]})csv_data = csv_propuesta.to_csv(index=False).encode('utf-8')st.write("")st.download_button(label="📥 Descargar Reporte Consolidado (CSV)",data=csv_data,file_name="reporte_estrategico_completo.csv",mime="text/csv",)
+        st.warning("**Ajuste Incompleto o Mercado Limitado:** Tu propuesta resuelve problemas, pero el volumen financiero de tu SOM es ajustado o tu validación es baja. Considera optimizar tu estrategia de precios o expandir los canales de distribución para elevar tu SAM.")
+    else:
+        st.error("**Proyecto en Zona de Riesgo:** El encaje de valor es muy bajo o los números del mercado no sustentan la operación de la empresa. No escales gastos; necesitas redefinir el dolor principal del cliente.")
+
+    # --- EXPORTACIÓN GENERAL ---
+    csv_propuesta = pd.DataFrame({
+        "Métrica General": ["Ajuste Total %", "Valor TAM $", "Valor SAM $", "Valor SOM $", "Validaciones (0-3)"],
+        "Resultado": [f"{encaje_total}%", f"${valor_tam:,.2f}", f"${valor_sam:,.2f}", f"${valor_som:,.2f}", validaciones]
+    })
+    
+    csv_data = csv_propuesta.to_csv(index=False).encode('utf-8')
+    st.write("")
+    st.download_button(
+        label="📥 Descargar Reporte Consolidado (CSV)",
+        data=csv_data,
         file_name="reporte_estrategico_completo.csv",
         mime="text/csv",
     )
