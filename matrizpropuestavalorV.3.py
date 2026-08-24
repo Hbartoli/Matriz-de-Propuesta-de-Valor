@@ -113,7 +113,7 @@ v2 = st.checkbox("¿Los clientes ya gastan dinero o tiempo en alternativas?", ke
 v3 = st.checkbox("¿Has validado el precio o un prototipo funcional con el mercado?", key="v3")
 
 st.markdown("---")
-btn_col1, btn_col2, _ = st.columns()
+btn_col1, btn_col2, _ = st.columns(3)
 with btn_col1:
     activar_analisis = st.button("📊 Ejecutar Diagnóstico Integral", type="primary")
 with btn_col2:
